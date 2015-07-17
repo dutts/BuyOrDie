@@ -14,15 +14,21 @@ function startListening(worker) {
 	worker.port.on("queryPostcode", function(msg) {
 		
 		var url = "http://api.postcodes.io/postcodes/" + encodeURIComponent(msg.postcode); 
-		var rating = 0;
-
 		var Request = require("sdk/request").Request;
 		Request({
   			url: url,
   			headers: {'x-api-version':2, 'Content-Type':'application/json', 'Accept':'application/json'},
-			onComplete: function (response) {	
-				if (response.json != null) {
-					worker.port.emit("postcodeLocation", {lat:response.json.result.latitude, lng:response.json.result.longitude});
+			onComplete: function (postcodeResponse) {	
+				if (postcodeResponse.json != null) {
+					//worker.port.emit("postcodeLocation", {lat:postcodeResponse.json.result.latitude, lng:postcodeResponse.json.result.longitude});
+					var policeUrl = "https://data.police.uk/api/crimes-street/all-crime?lat=" + encodeURIComponent(postcodeResponse.json.result.latitude) + "&lng=" + encodeURIComponent(postcodeResponse.json.result.longitude);
+					Request({
+  						url: policeUrl,
+  						headers: {'x-api-version':2, 'Content-Type':'application/json', 'Accept':'application/json'},
+						onComplete: function (policeResponse) {
+							worker.port.emit("policeData", {data:policeResponse});
+						}
+					}).get();
 				}
 			}
 		}).get();

@@ -10,6 +10,10 @@ alert(listingPostcode);
 self.port.emit("queryPostcode", {postcode:listingPostcode});
 
 // Set up the listener for the result returned from the addon script
+self.port.on("postcodeLocation", function(msg) {
+	console.log("lat " + msg.lat + ", lng " + msg.lng);
+});
+
 self.port.on("policeData", function(msg) {
-	console.log(msg.msg);
+	console.log(msg.data);
 });
