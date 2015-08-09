@@ -15,5 +15,5 @@ self.port.on("postcodeLocation", function(msg) {
 });
 
 self.port.on("policeData", function(msg) {
-	console.log(msg.data);
+	console.log(msg.name + " " + msg.number);
 });

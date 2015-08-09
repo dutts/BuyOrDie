@@ -26,7 +26,12 @@ function startListening(worker) {
   						url: policeUrl,
   						headers: {'x-api-version':2, 'Content-Type':'application/json', 'Accept':'application/json'},
 						onComplete: function (policeResponse) {
-							worker.port.emit("policeData", {data:policeResponse});
+							console.log(policeResponse.json);
+							var propName;
+							var numberOfElements;
+							for (propName in policeResponse.json);
+							numberOfElements = propName ? policeResponse.json[propName].length : 0;
+							worker.port.emit("policeData", {name: propName, number: numberOfElements});
 						}
 					}).get();
 				}
